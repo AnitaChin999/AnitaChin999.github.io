@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>秦慧馨 | Academic Portfolio</title>
+    <style>
+        :root {
+            /* 配色方案：深藍色專業風格 */
+            --primary: #2c3e50;    
+            --accent: #2980b9;     
+            --bg: #f8f9fa;         
+            --white: #ffffff;
+            --text: #333;
+            --light-gray: #7f8c8d;
+            --section-gap: 80px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html { scroll-behavior: smooth; } /* 點擊導航時平滑捲動 */
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background-color: var(--bg);
+        }
+
+        /* --- 導航列 --- */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            z-index: 1000;
+            padding: 15px 0;
+        }
+        
+        .nav-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo { font-weight: bold; font-size: 1.3rem; color: var(--primary); }
+
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--accent); }
+
+        /* --- 主要內容區 --- */
+        main {
+            max-width: 1000px;
+            margin: 120px auto 50px;
+            padding: 0 20px;
+        }
+
+        /* 動畫效果 */
+        section {
+            margin-bottom: var(--section-gap);
+            opacity: 0; 
+            transform: translateY(20px);
+            transition: all 0.6s ease-out;
+        }
+        section.visible { opacity: 1; transform: translateY(0); }
+
+        /* 標題樣式 */
+        h2 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+        }
+        h2::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 30px;
+            background: var(--accent);
+            margin-right: 15px;
+            border-radius: 4px;
+        }
+
+        /* --- 0. 個人簡介 --- */
+        .profile-header { text-align: center; margin-bottom: 60px; }
+        .profile-header h1 { font-size: 2.8rem; color: var(--primary); margin-bottom: 10px; }
+        .profile-header .subtitle { font-size: 1.2rem; color: var(--light-gray); margin-bottom: 20px; }
+        .contact-info span { margin: 0 10px; color: var(--accent); font-weight: bold; }
+
+        /* --- 1 & 2. 學歷與經歷 (左側線條樣式) --- */
+        .timeline-item {
+            position: relative;
+            padding-left: 40px;
+            margin-bottom: 40px;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: -40px; /* 連接線 */
+            width: 2px;
+            background: #e0e0e0;
+        }
+        .timeline-item:last-child::before { bottom: 0; }
+        
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: -4px;
+            top: 8px;
+            width: 10px;
+            height: 10px;
+            background: var(--accent);
+            border-radius: 50%;
+            border: 2px solid var(--white);
+            box-shadow: 0 0 0 2px var(--accent);
+        }
+
+        .time-period { font-size: 0.9rem; color: var(--accent); font-weight: bold; margin-bottom: 5px; display: block;}
+        .item-title { font-size: 1.3rem; font-weight: bold; color: var(--primary); }
+        .item-org { font-size: 1.1rem; color: #555; font-style: italic; margin-bottom: 8px; }
+        .item-desc { color: #666; font-size: 0.95rem; }
+
+        /* --- 3 & 4. 論文列表 (編號樣式) --- */
+        .paper-list { counter-reset: paper-counter; }
+        .paper-item {
+            position: relative;
+            background: var(--white);
+            padding: 20px 20px 20px 50px; /* 左邊留空間給編號 */
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            transition: transform 0.2s;
+        }
+        .paper-item:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        
+        /* 自動編號 CSS */
+        .paper-item::before {
+            counter-increment: paper-counter;
+            content: counter(paper-counter) ".";
+            position: absolute;
+            left: 15px;
+            top: 20px;
+            font-weight: bold;
+            color: var(--accent);
+            font-size: 1.1rem;
+        }
+
+        .paper-title { font-weight: bold; color: var(--primary); font-size: 1.05rem; }
+        .paper-authors { color: #666; font-size: 0.9rem; margin: 5px 0; }
+        .paper-venue { color: var(--light-gray); font-size: 0.9rem; font-style: italic; }
+        .highlight-me { text-decoration: underline; font-weight: bold; } /* 強調自己的名字 */
+
+        /* --- 5. 研究計畫 (卡片網格) --- */
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        .project-card {
+            background: var(--white);
+            padding: 25px;
+            border-radius: 8px;
+            border-top: 4px solid var(--accent);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .role-tag {
+            display: inline-block;
+            background: #eef2f7;
+            color: var(--accent);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        /* 手機版 RWD */
+        @media (max-width: 768px) {
+            .nav-links { display: none; } /* 簡單處理：手機版隱藏選單 */
+            .profile-header h1 { font-size: 2rem; }
+            .timeline-item { padding-left: 25px; }
+        }
+        
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #aaa;
+            font-size: 0.9rem;
+            border-top: 1px solid #eee;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-container">
+            <div class="logo">Dr. Chin's Profile</div>
+            <div class="nav-links">
+                <a href="#education">學歷</a>
+                <a href="#experience">經歷</a>
+                <a href="#journals">期刊論文</a>
+                <a href="#conferences">會議論文</a>
+                <a href="#projects">研究計畫</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <header class="profile-header">
+            <h1>秦慧馨 (Hui-Hsin Chin)</h1>
+            <div class="subtitle"></div>
+            <div class="contact-info">
+                <span>Email: huihsinchin@gmail.com</span> | 
+                <span>Lab: 僑光科技大學 8922 實驗室</span>
+            </div>
+        </header>
+
+        <section id="education">
+            <h2>學歷 Education</h2>
+            
+            <div class="timeline-item">
+                <span class="time-period">2013 - 2019</span>
+                <div class="item-title">工業工程與管理系 博士 (Ph.D.)</div>
+                <div class="item-org">國立交通大學</div>
+            </div>
+
+        </section>
+
+        <section id="experience">
+            <h2>經歷 Work Experience</h2>
+
+            <div class="timeline-item">
+                <span class="time-period">2025/02 - 至今</span>
+                <div class="item-title">副教授</div>
+                <div class="item-org">僑光科技大學 資訊科技系</div>
+            </div>
+
+            <div class="timeline-item">
+                <span class="time-period">2024/08 - 至今</span>
+                <div class="item-title">圖書館副館長</div>
+            </div>
+
+            <div class="timeline-item">
+                <span class="time-period">2023/08 - 2024/07</span>
+                <div class="item-title">圖書館館長</div>
+            </div>
+
+            <div class="timeline-item">
+                <span class="time-period">2019/08 - 2025/01</span>
+                <div class="item-title">助理教授</div>
+                <div class="item-org">僑光科技大學 資訊科技系</div>
+            </div>
+
+        </section>
+
+        <section id="journals">
+            <h2>期刊論文 Journal Papers</h2>
+            <div class="paper-list">
+                <div class="paper-item">
+                    <div class="paper-title">Private 5G and AIoT in Intelligent Healthcare: A Case Study of EECP Therapy</div>
+                    <div class="paper-authors">Y.-T. Cheng, J.-E. Huang, <span class="highlight-me"> H.-H. Chin*</div>
+                    <div class="paper-venue">Mobile Networks and Applications (In Revision) (通訊作者)</div>
+                </div>
+
+                <div class="paper-item">
+                    <div class="paper-title">Development Status of 5G Private Networks in Taiwan: Law and Practice</div>
+                    <div class="paper-authors"><span class="highlight-me">H.-H. Chin*</span>, H.-C. Lin, Y.-C. Cheng, C.-Y. Tsai</div>
+                    <div class="paper-venue">Wireless Networks, vol. 30, pp. 6833-6850, Nov. 2024. (第一作者) (通訊作者)</div>
+                </div>
+
+                <div class="paper-item">
+                    <div class="paper-title">A one-stage memetic algorithm for jointly detecting hierarchical and overlapping community structures in dynamic social networks</div>
+                    <div class="paper-authors">C.-C. Lin, <span class="highlight-me"> H.-H. Chin*</span>, Z.-Y. A. Chen, and J.-C. Wu</div>
+                    <div class="paper-venue">Wireless Networks, vol. 30, pp. 6739-6759, Nov. 2024. (通訊作者)</div>
+                </div>
+
+                <div class="paper-item">
+                    <div class="paper-title">5G Metaverse in Education</div>
+                    <div class="paper-authors">J.-E. Huang, L.-W. Chang,<span class="highlight-me"> H.-H. Chin*</span></div>
+                    <div class="paper-venue">Mobile Networks and Applications, vol. 29, pp. 947-960, June 2024. (通訊作者)</div>
+                </div>
+
+                <div class="paper-item">
+                    <div class="paper-title">Distributed Flexible Job Shop Scheduling through Deploying Fog and Edge Computing in Smart Factories Using Dual Deep Q Networks</div>
+                    <div class="paper-authors">C.-C. Lin, Y.-C. Peng, Z.-Y. A. Chen, Y.-H. Fan,<span class="highlight-me"> H.-H. Chin*</span></div>
+                    <div class="paper-venue">Mobile Networks and Applications, vol. 29, pp. 886-904, June 2024. (通訊作者)</div>
+                </div>
+          
+                <div class="paper-item">
+                    <div class="paper-title">Dynamic energy-efficient surveillance routing in uncertain group-based industrial wireless sensor networks</div>
+                    <div class="paper-authors">C, C. Lin,<span class="highlight-me"> H.-H. Chin*</span>, W. X. Lin, and K. W. Lu</div>
+                    <div class="paper-venue">Wireless Networks, Vol. 28, Issue 6, pp. 2597-2608, May. 2022. (通訊作者)</div>
+                </div>
+
+                <div class="paper-item">
+                    <div class="paper-title">Machine Learning Based Prediction and Modeling in Healthcare Secured Internet of Things</div>
+                    <div class="paper-authors">C.E. Aitzaouiat, A. Latif, A. Benslimane, <span class="highlight-me"> H.-H. Chin*</span></div>
+                    <div class="paper-venue">Mobile Networks and Applications, Vol. 27, Issue 1, pp. 84-95, Feb. 2022. (通訊作者)</div>
+                </div>
+
+                <div class="paper-item">
+                    <div class="paper-title">Multi-Objective Wireless Sensor Network Deployment Problem with Coopera-tive Distance-Based Sensing Coverage</div>
+                    <div class="paper-authors">S. C. Wang, Han C. W. Hsiao, C. C. Lin*,  <span class="highlight-me"> H.-H. Chin</span></div>
+                    <div class="paper-venue">Mobile Networks and Applications, Vol. 27, Issue 1, pp. 3-14, Feb. 2022. </div>
+                </div>
+ 
+                <div class="paper-item">
+                    <div class="paper-title">Balancing Latency and Cost in Software-Defined Vehicular Networks Using Ge-netic Algorithm</div>
+                    <div class="paper-authors">C. C. Lin*,<span class="highlight-me"> H.-H. Chin</span>,W. B. Chen</div>
+                    <div class="paper-venue">Journal of Network and Computer Applications, Vol. 116, pp. 35-41, Aug. 2018. </div>
+                </div>
+
+                <div class="paper-item">
+                    <div class="paper-title">Adaptive Router Node Placement with Gateway Positions and QoS Constraints in Dynamic Wireless Mesh Networks</div>
+                    <div class="paper-authors">C. C. Lin*, T. H. Chen, <span class="highlight-me"> H.-H. Chin</span></div>
+                    <div class="paper-venue">Journal of Network and Computer Applications, vol. 74, pp.149-164, Oct. 2016. </div>
+                </div>
+
+                <div class="paper-item">
+                    <div class="paper-title">Dynamic Multiservice Load Balancing in Cloud-based Multimedia System</div>
+                    <div class="paper-authors">C. C. Lin, <span class="highlight-me"> H.-H. Chin</span>,D. J. Deng*</div>
+                    <div class="paper-venue">IEEE Systems Journal, Vol. 8, No. 1, pp. 225-234, Mar. 2014. </div>
+                </div>
+
+                <div class="paper-item">
+                    <div class="paper-title">E-BEB: Enhanced Binary Exponential Backoff Algorithm for Multi-hop Wireless Ad-hoc Networks</div>
+                    <div class="paper-authors"><span class="highlight-me"> H.-H. Chin</span>, C. C. Lin, and D. J. Deng*</div>
+                    <div class="paper-venue">Wireless Personal Communications, Vol. 76, No. 2, pp. 193-207, May 2014. (第一作者) </div>
+                </div>
+
+
+
+
+
+            </div>
+        </section>
+
+        <section id="conferences">
+            <h2>會議論文 Conference Papers</h2>
+            <div class="paper-list">
+                <div class="paper-item">
+                    <div class="paper-title">Vision-Based Customized Area Personnel Detection for Tea Plantation Manage-ment</div>
+                    <div class="paper-authors">R. Han, L. Shu, S. Wang, S. Zang,<span class="highlight-me">H.-H. Chin</span>, D.-J. Deng</div>
+                    <div class="paper-venue">The 23rd IEEE International Conference on Industrial Informatics (IEEE INDIN 2025), Kunming, China, July 12-15, 2025.</div>
+                </div>
+
+                <div class="paper-item">
+                    <div class="paper-title">Brief Analysis of False Data Injection Attacks Based on Two Data Modalities in IoTs-based SolarInsecticidal Lamps</div>
+                    <div class="paper-authors">Q. Su, L. Shu, Q. Zhao, X. Yang, Z. Jian, J. Fang,<span class="highlight-me">H.-H. Chin</span></div>
+                    <div class="paper-venue">The 22nd IEEE International Conference on Industrial Informatics (IEEE INDIN 2024), Beijing, China, August 17-20, 2024.</div>
+                </div>
+
+                <div class="paper-item">
+                    <div class="paper-title">An Improved Meta Learning Approach for Optimizing Recipe Parameters for Semiconductor Process</div>
+                    <div class="paper-authors">Z.-Y. Chen, C.-C. Lin, K.-W. Lu,<span class="highlight-me">H.-H. Chin</span>, D.-J. Deng</div>
+                    <div class="paper-venue">The 49th Annual Conference of the IEEE Industrial Electronics Society (IEEE IECON 2023), Singapore, October 16-19, 2023.</div>
+                </div>
+
+                <div class="paper-item">
+                    <div class="paper-title">An AoI-Guaranteed Sensor Data Collection Strategy for RIS-assisted UAV Communication System</div>
+                    <div class="paper-authors">B. Yang, Y. Yu, J. Li, T. Xu, D.-J. Deng,<span class="highlight-me">H.-H. Chin</span>,Y. Li</div>
+                    <div class="paper-venue">The 12th IEEE/CIC International Conference on Communications in China (IEEE ICCC 2023), Dalian, China, August 10-12, 2023.</div>
+                </div>
+
+                <div class="paper-item">
+                    <div class="paper-title">5G Metaverse Campus Development: A Professional Skills Training System</div>
+                    <div class="paper-authors">J.-E. Huang,<span class="highlight-me">H.-H. Chin</span></div>
+                    <div class="paper-venue">Taiwan Academic Network and National Computer Symposium (TANET and NCS 2023), Taipei, Taiwan, November 1-3, 2023. (Best Paper Award)</div>
+                </div>
+
+                <div class="paper-item">
+                    <div class="paper-title">Fuzzy Surveillance Routing in Group-based Industrial Wireless Sensor Networks</div>
+                    <div class="paper-authors"><span class="highlight-me">H.-H. Chin</span>,W.-X. Lin, K.-W. Lu, C.-C. Lin</div>
+                    <div class="paper-venue">The 5th EAI International Conference on Smart Grid and Internet of Things (SGIoT 2021), Taichung, Taiwan, December 18-19, 2021. (Best Paper Award)</div>
+                </div>
+
+
+
+            </div>
+        </section>
+
+        <section id="projects">
+            <h2>國科會計畫 Research Projects</h2>
+            <div class="project-grid">
+                <div class="project-card">
+                    <span class="role-tag">計畫主持人 (PI)</span>
+                    <h3>5G專網於智慧醫療的應用:以EECP療程為例</h3>
+                    <small style="color: #888;">國科會 NSTC • 2024/08 - 2026/07</small>
+                </div>
+
+                <div class="project-card">
+                    <span class="role-tag">計畫主持人 (PI)</span>
+                    <h3>模因演算法於動態社交網路中檢測分層與重疊社群架構之研究</h3>
+                    <small style="color: #888;">國科會 NSTC • 2023/08 - 2024/07</small>
+                </div>
+
+                 <div class="project-card">
+                    <span class="role-tag">計畫主持人 (PI)</span>
+                    <h3>Dynamic Energy-efficient Routing for stream video in Group-based Industrial Wireless Sensor Networks</h3>
+                    <small style="color: #888;">國科會 NSTC • 2022/08 - 2023/07</small>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects">
+            <h2>產學合作計畫 Research Projects</h2>
+            <div class="project-grid">
+                <div class="project-card">
+                    <span class="role-tag">計畫主持人 (PI)</span>
+                    <h3>建置職訓數位人才實作場域設計與規劃架構委託</h3>
+                    <p style="margin: 10px 0; color: #555;">
+                        委託單位:工業技術研究院
+                    </p>
+                    <small style="color: #888;">EA-GP-114-001 • 2025/11 - 2025/12</small>
+                </div>
+
+                <div class="project-card">
+                    <span class="role-tag">計畫主持人 (PI)</span>
+                    <h3>農作物（草莓）之 Line平台生成式AI辨識系統</h3>
+                    <p style="margin: 10px 0; color: #555;">
+                        委託單位:工業技術研究院
+                    </p>
+                    <small style="color: #888;">EA-GP-113-011 • 2025/02 - 2025/12</small>
+                </div>
+
+                <div class="project-card">
+                    <span class="role-tag">計畫主持人 (PI)</span>
+                    <h3>供應鏈風險預測與應對策略之研究計畫</h3>
+                    <p style="margin: 10px 0; color: #555;">
+                        委託單位:資訊工業策進會
+                    </p>
+                    <small style="color: #888;">EA-GP-113-007 • 2025/03 - 2025/11</small>
+                </div>
+
+                 <div class="project-card">
+                    <span class="role-tag">計畫主持人 (PI)</span>
+                    <h3>整合5G元宇宙與生成式AI之指導系統開發</h3>
+                    <p style="margin: 10px 0; color: #555;">
+                        委託單位:工業技術研究院
+                    </p>
+                    <small style="color: #888;">EA-GP-112-009 • 2024/05 - 2024/11</small>
+                </div>
+
+                <div class="project-card">
+                    <span class="role-tag">計畫主持人 (PI)</span>
+                    <h3>5G專網於智慧化種植管理系統之應用研究</h3>
+                    <p style="margin: 10px 0; color: #555;">
+                        委託單位:工業技術研究院
+                    </p>
+                    <small style="color: #888;">EA-GP-112-008 • 2024/05 - 2024/12</small>
+                </div>
+
+                <div class="project-card">
+                    <span class="role-tag">計畫主持人 (PI)</span>
+                    <h3>供應鏈問題前瞻解決方法</h3>
+                    <p style="margin: 10px 0; color: #555;">
+                        委託單位:資訊工業策進會
+                    </p>
+                    <small style="color: #888;">EA-GP-112-007 • 2024/03 - 2024/11</small>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        &copy; 2025 Hui-Hsin Chin. <br>
+        Last Updated: 2025/11/23
+    </footer>
+
+    <script>
+        // 區塊滑入動畫 (Intersection Observer)
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>
